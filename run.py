@@ -26,7 +26,8 @@ def downloader(filepath):
         print("not found path")
     if not os.path.isfile(filename):
         print("not found file")
-        return render_template('html/index.html', f_text2=" *** Cached config json not found.")
+        dstyle = "pointer-events:none; opacity:0.2; display;"
+        return render_template('html/index.html', f_text2=" *** Cached config json not found.", dstyle=dstyle)
     else:
         return send_file(filename, as_attachment=True, attachment_filename='input.json')
 
@@ -38,7 +39,8 @@ def api_upload():
     if request.method == "POST":
         form_adapter.adapt(request, dict)
     if dict["upload_rte"]:
-        return render_template('html/index.html', f_text3=" *** Upload success.")
+        dstyle = "pointer-events:none; opacity:0.2; display;"
+        return render_template('html/index.html', f_text3=" *** Upload success.", dstyle=dstyle)
     else:
         return jsonify({"errno": 1001, "errmsg": "upload failed"})
 
