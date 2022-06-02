@@ -45,12 +45,6 @@
 
 <a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
 
-<form method="post"  style="display">
-<p>upload config:</p>
-<input type="hidden" name="form_name" value="UploadConfigOperator">
-<input type="hidden" name="uploadfile_path" value="{{file_path}}">
-<input type="submit" {{disabled}} value="upload config"></input>
-</form>
 
 <form method="post" enctype="multipart/form-data" action="upload">
 <input type="hidden" name="form_name" value="UploadConfigOperator">
