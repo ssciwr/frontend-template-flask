@@ -121,7 +121,7 @@ class UploadConfigOperator(FormOperator):
             # ext = fname.rsplit('.', 1)[1]  # get file ext
             # unix_time = int(time.time())
             # new_filename = str(unix_time) + '.' + ext  # change new file name
-            f.save(cache_path+"/input.wmv")
+            f.save(cache_path+"/input.json")
             dict["upload_rte"] = True
         return
 
