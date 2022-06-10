@@ -4,7 +4,8 @@ import os
 import time
 from test.ssctest import circle_area, timing_task
 
-ALLOWED_EXTENSIONS = set(['json', 'txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF', 'wmv'])
+
+ALLOWED_EXTENSIONS = set(['json'])
 
 
 class FormOperator:
@@ -13,7 +14,7 @@ class FormOperator:
     def __init__(self):
         None
 
-    def action(self, request, flash_dict):
+    def action(self, request, msg_dict):
         return
 
 
@@ -23,15 +24,15 @@ class CircleAreaOperator(FormOperator):
     def __init__(self):
         None
 
-    def action(self, request, flash_dict):
+    def action(self, request, msg_dict):
         radius_text = request.form.get('radius')
         if radius_text is not None:
             if radius_text.isdigit():
                 radius = int(radius_text)
                 area = circle_area(radius)
-                flash_dict["circle"] = "circle area for radius " + str(radius) + " is " + str(area)
+                msg_dict["circle"] = "circle area for radius " + str(radius) + " is " + str(area)
             else:
-                flash_dict["circle"] = radius_text + " is not a valid radius"
+                msg_dict["circle"] = radius_text + " is not a valid radius"
         return
 
 
@@ -41,15 +42,15 @@ class CubeAreaOperator(FormOperator):
     def __init__(self):
         None
 
-    def action(self, request, flash_dict):
+    def action(self, request, msg_dict):
         length_text = request.form.get('length')
         if length_text is not None:
             if length_text.isdigit():
                 length = int(length_text)
                 cube = timing_task(length)
-                flash_dict["cube"] = "cube for length " + str(length) + " is " + str(cube)
+                msg_dict["cube"] = "cube for length " + str(length) + " is " + str(cube)
             else:
-                flash_dict["cube"] = length_text + " is not a valid length"
+                msg_dict["cube"] = length_text + " is not a valid length"
         return
 
 
@@ -59,7 +60,7 @@ class SetJsonOperator(FormOperator):
     def __init__(self):
         None
 
-    def action(self, request, flash_dict):
+    def action(self, request, msg_dict):
         tool = request.form.get('tool')
         language = request.form.get('language')
         option = request.form.get('option')
@@ -80,9 +81,9 @@ class SetJsonOperator(FormOperator):
             os.makedirs(cache_path)
         with open(cache_path+"/input.json", "w") as dump_f:
             json.dump(input, dump_f, indent=4)
-        flash_dict['file_path'] = cache_dir
-        flash_dict['js_cached'] = " *** Set configuration success, download your configuration: "
-        flash_dict['dstyle'] = ""
+        msg_dict['file_path'] = cache_dir
+        msg_dict['js_cached'] = " *** Set configuration success, download your configuration: "
+        msg_dict['dstyle'] = ""
 
         return
 
@@ -93,9 +94,7 @@ class DownloadConfigOperator(FormOperator):
     def __init__(self):
         None
 
-    def action(self, request, flash_dict):
-        cache_dir = request.form.get('file_path')
-        cache_file_path = "./statics/json/cache/"+cache_dir+"/input.json"
+    def action(self, request, msg_dict):
         return
 
 
@@ -109,7 +108,7 @@ class UploadConfigOperator(FormOperator):
     def __init__(self):
         None
 
-    def action(self, request, dict):
+    def action(self, request, msg_dict):
         cache_dir = ''.join(random.sample('abcdefghijklmnopqrstuvwxyz!0123456789', 5))
         cache_path = "./statics/json/cache/" + cache_dir
         if not os.path.exists(cache_path):
@@ -122,7 +121,7 @@ class UploadConfigOperator(FormOperator):
             # unix_time = int(time.time())
             # new_filename = str(unix_time) + '.' + ext  # change new file name
             f.save(cache_path+"/input.json")
-            dict["upload_rte"] = True
+            msg_dict["upload_rte"] = True
         return
 
 
@@ -138,11 +137,11 @@ class FormAdapter:
     def register_form_operator(self, form_operator, form_name):
         self.form_operators[form_name] = form_operator
 
-    def adapt(self, request, dict):
+    def adapt(self, request, msg_dict):
         form_name = request.form.get('form_name')
         if form_name is not None:
             form_operator = self.form_operators[form_name]
-            form_operator.action(request, dict)
+            form_operator.action(request, msg_dict)
             return True
         else:
             return False

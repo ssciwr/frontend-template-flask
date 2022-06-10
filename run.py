@@ -34,15 +34,15 @@ def downloader(filepath):
 
 @app.route('/upload', methods=['POST'], strict_slashes=False)
 def api_upload():
-    dict = {"upload_rte": False}
+    msg_dict = {"upload_rte": False}
     form_adapter = FormAdapter()
     if request.method == "POST":
-        form_adapter.adapt(request, dict)
-    if dict["upload_rte"]:
+        form_adapter.adapt(request, msg_dict)
+    if msg_dict["upload_rte"]:
         dstyle = "pointer-events:none; opacity:0.2; display;"
         return render_template('html/index.html', f_text3=" *** Upload success.", dstyle=dstyle)
     else:
-        return jsonify({"errno": 1001, "errmsg": "upload failed"})
+        return jsonify({"errno": 1001, "errmsg": "Invalid json file"})
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@
 <p>SSC</p>
 
 <form method="post">
-<p>calculate circle area:</p>
+<p>1. Calculate circle area:</p>
 <label>radius:</label> <input type="text", name="radius"></input> </br>
 <input type="hidden" name="form_name" value="CircleAreaOperator">
 <input type="submit", value="submit"></input>
@@ -17,16 +17,15 @@
 <p>{{f_text0}}</p>
 
 <form method="post">
-<p>timing task example calculate cube:</p>
+<p>2. Timing task example, calculate cube:</p>
 <label>length:</label> <input type="text", name="length"></input> </br>
 <input type="hidden" name="form_name" value="CubeAreaOperator">
 <input type="submit", value="submit"></input>
 </form>
 <p>{{f_text1}}</p>
 
-
-<form method="post">
-<p>set input:</p>
+<p>3. Set input:</p>
+<form method="post" action="/">
 <label>tool name:</label> <input type="text", name="tool"></input> </br>
 <label>language:</label> <input type="text", name="language"></input> </br>
 <label>processing option:</label> <input type="text", name="option"></input> </br>
@@ -35,22 +34,15 @@
 </form>
 <p>{{f_text2}}</p>
 
-
-<form method="post"  style="display:none" action="download/{{file_path}}">
-<p>download config:</p>
-<input type="hidden" name="form_name" value="DownloadConfigOperator">
-<input type="hidden" name="file_path" value="{{file_path}}">
-<input type="submit" {{disabled}} value="download config"></input>
-</form>
-
+<p>4. Download configuration:</p>
 <a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
 
 
+<p>5. Please select your upload json configuration file：</p>
 <form method="post" enctype="multipart/form-data" action="upload">
 <input type="hidden" name="form_name" value="UploadConfigOperator">
-<p>please select your upload file：</p>
-<p><input type="file" name="file" /></p>
-<p><input type="submit" value="upload" /></p>
+<input type="file" name="file" />
+<input type="submit" value="upload" />
 </form>
 <p>{{f_text3}}</p>
 
