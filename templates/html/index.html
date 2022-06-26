@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <title> SSC Frontend </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript">
+    function selectFile(fnUpload) {
+        var filename = fnUpload.value;
+        var mime = filename.toLowerCase().substr(filename.lastIndexOf("."));
+        if(mime!=".json")
+        {
+            alert("Please select json file configuration.");
+            fnUpload.outerHTML=fnUpload.outerHTML;
+        }
+    }
+    </script>
 </head>
 <body>
 <p>SSC</p>
@@ -41,7 +52,7 @@
 <p>5. Please select your upload json configuration file:</p>
 <form method="post" enctype="multipart/form-data" action="upload">
 <input type="hidden" name="form_name" value="UploadConfigOperator">
-<input type="file" name="file" />
+<input type="file" name="file" onchange="selectFile(this)" />
 <input type="submit" value="upload" />
 </form>
 <p>{{f_text3}}</p>

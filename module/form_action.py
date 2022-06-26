@@ -66,7 +66,11 @@ class SetJsonOperator(FormOperator):
         option = request.form.get('option')
 
         with open("./statics/json/input.json", "r") as load_f:
-            input = json.load(load_f)
+            try:
+                input = json.load(load_f)
+            except ValueError as err:
+                print("SetJsonOperator load json error.")
+                return
 
         if tool is not None:
             input['tool'] = tool
@@ -111,17 +115,26 @@ class UploadConfigOperator(FormOperator):
     def action(self, request, msg_dict):
         cache_dir = ''.join(random.sample('abcdefghijklmnopqrstuvwxyz!0123456789', 5))
         cache_path = "./statics/json/cache/" + cache_dir
-        if not os.path.exists(cache_path):
-            os.makedirs(cache_path)
+
         f = request.files['file']
         if f and allowed_file(f.filename):
-            # set tmp file name
-            # fname = f.filename
-            # ext = fname.rsplit('.', 1)[1]  # get file ext
-            # unix_time = int(time.time())
-            # new_filename = str(unix_time) + '.' + ext  # change new file name
-            f.save(cache_path+"/input.json")
+            try:
+                input = json.load(f)
+            except ValueError as err:
+                print("UploadConfigOperator load json error.")
+                msg_dict["upload_rte"] = False
+                msg_dict["upload_msg"] = " *** Upload configuration failed. Invalid json file format."
+                return
+            if not os.path.exists(cache_path):
+                os.makedirs(cache_path)
+            with open(cache_path + "/input.json", "w") as dump_f:
+                json.dump(input, dump_f, indent=4)
             msg_dict["upload_rte"] = True
+            msg_dict["upload_msg"] = " *** Upload configuration success."
+        else:
+            msg_dict["upload_rte"] = False
+            msg_dict["upload_msg"] = " *** Upload configuration failed. Invalid json file extension."
+
         return
 
 
