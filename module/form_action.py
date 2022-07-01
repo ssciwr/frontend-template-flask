@@ -102,6 +102,37 @@ class DownloadConfigOperator(FormOperator):
         return
 
 
+class RegisterOperator(FormOperator):
+    NAME = "RegisterOperator"
+
+    def __init__(self):
+        None
+
+    def action(self, request, msg_dict):
+        email = request.form.get('email')
+        password = request.form.get('password')
+        cf_password = request.form.get('cf_password')
+        print(email)
+        print(password)
+        print(cf_password)
+
+        return
+
+
+class LoginOperator(FormOperator):
+    NAME = "LoginOperator"
+
+    def __init__(self):
+        None
+
+    def action(self, request, msg_dict):
+        email = request.form.get('email')
+        password = request.form.get('password')
+        print(email)
+        print(password)
+        return
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -146,6 +177,8 @@ class FormAdapter:
         self.register_form_operator(SetJsonOperator(), SetJsonOperator.NAME)
         self.register_form_operator(DownloadConfigOperator(), DownloadConfigOperator.NAME)
         self.register_form_operator(UploadConfigOperator(), UploadConfigOperator.NAME)
+        self.register_form_operator(RegisterOperator(), RegisterOperator.NAME)
+        self.register_form_operator(LoginOperator(), LoginOperator.NAME)
 
     def register_form_operator(self, form_operator, form_name):
         self.form_operators[form_name] = form_operator

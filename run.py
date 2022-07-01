@@ -1,6 +1,6 @@
 import os
 import time
-from flask import Flask, render_template, flash, request, send_from_directory, send_file, jsonify
+from flask import Flask, render_template, flash, request, send_from_directory, send_file, jsonify, redirect, url_for
 from module.form_action import FormAdapter
 
 app = Flask(__name__)
@@ -16,6 +16,38 @@ def main_index():
 
     return render_template('html/index.html', f_text0=flash_text["circle"], f_text1=flash_text["cube"],
                            f_text2=flash_text["js_cached"], dstyle=flash_text["dstyle"], file_path=flash_text["file_path"])
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('html/login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg_dict = {}
+    form_adapter = FormAdapter()
+    if request.method == "POST":
+        form_adapter.adapt(request, msg_dict)
+    return render_template('html/register.html')
+
+
+@app.route('/login/action', methods=['GET', 'POST'])
+def login_action():
+    msg_dict = {}
+    form_adapter = FormAdapter()
+    if request.method == "POST":
+        form_adapter.adapt(request, msg_dict)
+    return redirect(url_for('login'))
+
+
+@app.route('/register/action', methods=['GET', 'POST'])
+def register_action():
+    msg_dict = {}
+    form_adapter = FormAdapter()
+    if request.method == "POST":
+        form_adapter.adapt(request, msg_dict)
+    return redirect(url_for('register'))
 
 
 @app.route("/download/<path:filepath>", methods=['GET', 'POST'])
