@@ -69,7 +69,7 @@ class SetJsonOperator(FormOperator):
             try:
                 input = json.load(load_f)
             except ValueError as err:
-                print("SetJsonOperator load json error.")
+                print(self.NAME, " load json error.")
                 return
 
         if tool is not None:
@@ -115,8 +115,43 @@ class RegisterOperator(FormOperator):
         print(email)
         print(password)
         print(cf_password)
+        if password != cf_password:
+            msg_dict['rte'] = False
+            msg_dict['reg_msg'] = "2 passwords not match"
+            return
 
-        return
+        with open("./statics/json/users.json", "r") as load_f:
+            try:
+                users = json.load(load_f)
+            except ValueError as err:
+                print(self.NAME, " load json error.")
+                msg_dict['rte'] = False
+                msg_dict['reg_msg'] = "load users error."
+                return
+        if email in users:
+            msg_dict['rte'] = False
+            msg_dict['reg_msg'] = "user email exists"
+            return
+
+        tasks = msg_dict['tasks']
+        task = {'task_name': "save_register", 'fn': self.save_register, 'args': (email, password)}
+        tasks.put(task)
+        msg_dict['rte'] = True
+        msg_dict['reg_msg'] = "user register success"
+        # tasks.join() # if need wait task finished, use tasks.join() to block thread until task finished
+
+    def save_register(self, email, password):
+        print("run save_register")
+        with open("./statics/json/users.json", "r") as load_f:
+            try:
+                users = json.load(load_f)
+            except ValueError as err:
+                print(self.NAME, " load json error.")
+                return
+
+        users[email] = password
+        with open("./statics/json/users.json", "w") as dump_f:
+            json.dump(users, dump_f, indent=4)
 
 
 class LoginOperator(FormOperator):
