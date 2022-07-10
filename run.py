@@ -78,6 +78,10 @@ def register():
         if not msg_dict['rte'] and 'email_check_msg' in msg_dict:
             msg = msg_dict['email_check_msg']
             mail.send(msg)
+        if msg_dict['rte']:
+            session.pop('user_email', None)
+            session['user_email'] = msg_dict['user_email']
+            return redirect('/')
 
     return render_template('html/register.html', reg_msg=msg_dict['reg_msg'])
 

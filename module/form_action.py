@@ -173,6 +173,7 @@ class RegisterOperator(FormOperator):
         tasks.put(task)
         msg_dict['rte'] = True
         msg_dict['reg_msg'] = "user register success"
+        msg_dict['user_email'] = email
         # tasks.join() # if need wait task finished, use tasks.join() to block thread until task finished
 
     def email_check(self, msg_dict, email, password):
