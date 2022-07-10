@@ -161,10 +161,32 @@ class LoginOperator(FormOperator):
         None
 
     def action(self, request, msg_dict):
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email', None)
+        password = request.form.get('password', None)
         print(email)
         print(password)
+
+        with open("./statics/json/users.json", "r") as load_f:
+            try:
+                users = json.load(load_f)
+            except ValueError as err:
+                print(self.NAME, " load json error.")
+                msg_dict['rte'] = False
+                msg_dict['login_msg'] = "load users error."
+                return
+
+        user_pwd = None
+        if email and email in users:
+            user_pwd = users[email]
+
+        if password and user_pwd == password:
+            msg_dict['rte'] = True
+            msg_dict['login_msg'] = "user login success"
+            msg_dict['user_email'] = email
+        else:
+            msg_dict['rte'] = False
+            msg_dict['login_msg'] = "invalid user password"
+
         return
 
 
