@@ -3,9 +3,17 @@ import random
 import os
 import time
 from test.ssctest import circle_area, timing_task
-
+from dataclasses import dataclass
+from flask_mail import Mail, Message
 
 ALLOWED_EXTENSIONS = set(['json'])
+
+
+@dataclass
+class UserReg:
+    check_id: str
+    user_email: str
+    user_password: str
 
 
 class FormOperator:
@@ -104,11 +112,18 @@ class DownloadConfigOperator(FormOperator):
 
 class RegisterOperator(FormOperator):
     NAME = "RegisterOperator"
+    email_verification = False
+    user_reg_pending = []
+    valid_emails = ['uni-heidelberg.de']
 
     def __init__(self):
         None
 
     def action(self, request, msg_dict):
+        if request.method == "GET" and 'check_id' in msg_dict:
+            self.email_check_action(msg_dict)
+            return
+
         email = request.form.get('email')
         password = request.form.get('password')
         cf_password = request.form.get('cf_password')
@@ -128,17 +143,66 @@ class RegisterOperator(FormOperator):
                 msg_dict['rte'] = False
                 msg_dict['reg_msg'] = "load users error."
                 return
+
+        valid_email = False
+        for email_suffix in self.valid_emails:
+            if email.endswith(email_suffix):
+                valid_email = True
+        if not valid_email:
+            print(self.NAME, " not a valid email address.")
+            msg_dict['rte'] = False
+            msg_dict['reg_msg'] = "not a valid email suffix"
+            return
+
         if email in users:
+            print(self.NAME, " user email exists.")
             msg_dict['rte'] = False
             msg_dict['reg_msg'] = "user email exists"
             return
 
+        if self.email_verification:
+            self.email_check(msg_dict, email, password)
+        else:
+            self.pending_reg_task(msg_dict, email, password)
+
+        return
+
+    def pending_reg_task(self, msg_dict, email, password):
         tasks = msg_dict['tasks']
         task = {'task_name': "save_register", 'fn': self.save_register, 'args': (email, password)}
         tasks.put(task)
         msg_dict['rte'] = True
         msg_dict['reg_msg'] = "user register success"
         # tasks.join() # if need wait task finished, use tasks.join() to block thread until task finished
+
+    def email_check(self, msg_dict, email, password):
+        check_id = ''.join(random.sample('abcdefghijklmnopqrstuvwxyz!0123456789', 13))
+        check_link = 'http://127.0.0.1:8000/reg_email/' + check_id
+
+        msg_dict['rte'] = False
+        msg_dict['reg_msg'] = "we send a verification link to your email. please check your email" \
+                              " and finish registration"
+
+        user_reg = UserReg(check_id, email, password)
+        self.user_reg_pending.append(user_reg)
+        msg = Message(subject="SSC Frontend Verification",
+                      sender=msg_dict['mail_sender'],
+                      recipients=[email],  # replace with your email for testing
+                      body="This is a verification link to your email. please click the link： \n" + check_link
+                      + "\n to finish registration")
+
+        msg_dict['email_check_msg'] = msg
+
+    def email_check_action(self, msg_dict):
+        for user_reg in  self.user_reg_pending:
+            if user_reg.check_id == msg_dict['check_id']:
+                email = user_reg.user_email
+                password = user_reg.user_password
+                self.pending_reg_task(msg_dict, email, password)
+                msg_dict['user_email'] = email
+                return
+        msg_dict['rte'] = False
+        msg_dict['reg_msg'] = "user email verification failed"
 
     def save_register(self, email, password):
         print("run save_register")
@@ -241,7 +305,10 @@ class FormAdapter:
         self.form_operators[form_name] = form_operator
 
     def adapt(self, request, msg_dict):
-        form_name = request.form.get('form_name')
+        form_name = request.form.get('form_name', None)
+        if 'form_name' in msg_dict:
+            form_name = msg_dict['form_name']
+
         if form_name is not None:
             form_operator = self.form_operators[form_name]
             form_operator.action(request, msg_dict)

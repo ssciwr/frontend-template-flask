@@ -3,9 +3,22 @@ import time
 from flask import Flask, render_template, request, send_file, jsonify, redirect, url_for, session, g
 from module.form_action import FormAdapter
 from multiprocessing import Process, JoinableQueue
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 tasks = JoinableQueue()
+
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT": 465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": 'sender_email',
+    "MAIL_PASSWORD": 'sender_email_pwd'
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
 
 
 def task_main(tasks):
@@ -58,11 +71,28 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    msg_dict = {'tasks': tasks, 'reg_msg': ''}
+    msg_dict = {'tasks': tasks, 'reg_msg': '', 'mail_sender': app.config.get("MAIL_USERNAME")}
     form_adapter = FormAdapter()
     if request.method == "POST":
         form_adapter.adapt(request, msg_dict)
+        if not msg_dict['rte'] and 'email_check_msg' in msg_dict:
+            msg = msg_dict['email_check_msg']
+            mail.send(msg)
+
     return render_template('html/register.html', reg_msg=msg_dict['reg_msg'])
+
+
+@app.route("/reg_email/<path:check_id>", methods=['GET', 'POST'])
+def reg_email(check_id):
+    msg_dict = {'tasks': tasks, 'form_name': 'RegisterOperator', 'check_id': check_id}
+    form_adapter = FormAdapter()
+    form_adapter.adapt(request, msg_dict)
+    if msg_dict['rte']:
+        session.pop('user_email', None)
+        session['user_email'] = msg_dict['user_email']
+        return redirect('/')
+    else:
+        return render_template('html/register.html', reg_msg=msg_dict['reg_msg'])
 
 
 @app.route("/download/<path:filepath>", methods=['GET', 'POST'])
