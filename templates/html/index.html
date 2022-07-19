@@ -30,21 +30,21 @@
 
 <p>2. Set input parameters:</p>
 <form method="post" action="/">
-<label>tool name (if several, separate by commas as spacy, stanza):</label> <input type="text", name="tool"></input> </br>
-<label>corpus name:</label> <input type="text", name="corpus_name"></input> </br>
-<label>language to be analyzed:</label> <input type="text", name="language"></input> </br>
-<label>processing option (select fast, accurate or manual):</label> <input type="text", name="option"></input> </br>
-<label>processing type (select any or several of sentencize, tokenize, pos, lemma):</label> <input type="text", name="option"></input> </br>
-<label>output format (select any of vrt, xml):</label> <input type="text", name="option"></input> </br>
+<label>tool name (if several, separate by commas as spacy, stanza):</label> <input type="text" name="tool"> <br>
+<label>corpus name:</label> <input type="text" name="corpus_name"> <br>
+<label>language to be analyzed:</label> <input type="text" name="language"> <br>
+<label>processing option (select fast, accurate or manual):</label> <input type="text" name="option"> <br>
+<label>processing type (select any or several of sentencize, tokenize, pos, lemma):</label> <input type="text" name="option"> <br>
+<label>output format (select any of vrt, xml):</label> <input type="text" name="option"> <br>
 <input type="hidden" name="form_name" value="SetJsonOperator">
-<input type="submit", value="submit"></input>
+<input type="submit" value="submit">
 </form>
 <p>{{f_text1}}</p>
 
 <p>3. Please download your configuration and save for later:</p>
 <a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
 
-<p>4. For a preset configuration: Please upload your json input file with processing options:</p>
+<p>4. For a preset configuration, please upload your json input file with processing options:</p>
 <form method="post" enctype="multipart/form-data" action="upload">
 <input type="hidden" name="form_name" value="UploadConfigOperator">
 <input type="file" name="file" onchange="selectFile(this)" />
@@ -54,17 +54,17 @@
 
 <form method="post">
 <p>1. Calculate circle area:</p>
-<label>radius:</label> <input type="text", name="radius"></input> </br>
+<label>radius:</label> <input type="text" name="radius"> <br>
 <input type="hidden" name="form_name" value="CircleAreaOperator">
-<input type="submit", value="submit"></input>
+<input type="submit" value="submit">
 </form>
 <p>{{f_text3}}</p>
 
 <form method="post">
 <p>2. Timing task example, calculate cube:</p>
-<label>length:</label> <input type="text", name="length"></input> </br>
+<label>length:</label> <input type="text" name="length"> <br>
 <input type="hidden" name="form_name" value="CubeAreaOperator">
-<input type="submit", value="submit"></input>
+<input type="submit" value="submit">
 </form>
 <p>{{f_text4}}</p>
 
