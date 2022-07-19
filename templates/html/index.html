@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> SSC Frontend </title>
+    <title> NLPannotator Frontend </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript">
     function selectFile(fnUpload) {
@@ -17,7 +17,40 @@
     </script>
 </head>
 <body>
-<p>SSC</p>
+<p>Automated annotation for a set of different tools and languages. For more information, see <a href="https://github.com/ssciwr/argumentation-management">the GitHub repository.</a></p>
+<p>Provided by the Scientific Software Center, Heidelberg University, July 2023.</p>
+
+<p>1. Please select your raw text file to be annotated:</p>
+<form method="post" enctype="multipart/form-data" action="upload">
+<input type="hidden" name="form_name" value="UploadConfigOperator">
+<input type="file" name="file" onchange="selectFile(this)" />
+<input type="submit" value="upload" />
+</form>
+<p>{{f_text0}}</p>
+
+<p>2. Set input parameters:</p>
+<form method="post" action="/">
+<label>tool name (if several, separate by commas as spacy, stanza):</label> <input type="text", name="tool"></input> </br>
+<label>corpus name:</label> <input type="text", name="corpus_name"></input> </br>
+<label>language to be analyzed:</label> <input type="text", name="language"></input> </br>
+<label>processing option (select fast, accurate or manual):</label> <input type="text", name="option"></input> </br>
+<label>processing type (select any or several of sentencize, tokenize, pos, lemma):</label> <input type="text", name="option"></input> </br>
+<label>output format (select any of vrt, xml):</label> <input type="text", name="option"></input> </br>
+<input type="hidden" name="form_name" value="SetJsonOperator">
+<input type="submit", value="submit"></input>
+</form>
+<p>{{f_text1}}</p>
+
+<p>3. Please download your configuration and save for later:</p>
+<a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
+
+<p>4. For a preset configuration: Please upload your json input file with processing options:</p>
+<form method="post" enctype="multipart/form-data" action="upload">
+<input type="hidden" name="form_name" value="UploadConfigOperator">
+<input type="file" name="file" onchange="selectFile(this)" />
+<input type="submit" value="upload" />
+</form>
+<p>{{f_text2}}</p>
 
 <form method="post">
 <p>1. Calculate circle area:</p>
@@ -25,7 +58,7 @@
 <input type="hidden" name="form_name" value="CircleAreaOperator">
 <input type="submit", value="submit"></input>
 </form>
-<p>{{f_text0}}</p>
+<p>{{f_text3}}</p>
 
 <form method="post">
 <p>2. Timing task example, calculate cube:</p>
@@ -33,29 +66,8 @@
 <input type="hidden" name="form_name" value="CubeAreaOperator">
 <input type="submit", value="submit"></input>
 </form>
-<p>{{f_text1}}</p>
+<p>{{f_text4}}</p>
 
-<p>3. Set input:</p>
-<form method="post" action="/">
-<label>tool name:</label> <input type="text", name="tool"></input> </br>
-<label>language:</label> <input type="text", name="language"></input> </br>
-<label>processing option:</label> <input type="text", name="option"></input> </br>
-<input type="hidden" name="form_name" value="SetJsonOperator">
-<input type="submit", value="submit"></input>
-</form>
-<p>{{f_text2}}</p>
-
-<p>4. Download configuration:</p>
-<a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
-
-
-<p>5. Please select your upload json configuration file:</p>
-<form method="post" enctype="multipart/form-data" action="upload">
-<input type="hidden" name="form_name" value="UploadConfigOperator">
-<input type="file" name="file" onchange="selectFile(this)" />
-<input type="submit" value="upload" />
-</form>
-<p>{{f_text3}}</p>
 
 </body>
 </html>
