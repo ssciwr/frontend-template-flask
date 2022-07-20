@@ -5,9 +5,9 @@
     "language": "en",
     "processing_option": "fast",
     "processing_type": "tokenize",
+    "output_format": "xml",
     "advanced_options": {
         "output_dir": "./test/out/",
-        "output_format": "STR",
         "corpus_dir": "./test/corpora/",
         "registry_dir": "./test/registry/",
         "multiprocessing": false,
