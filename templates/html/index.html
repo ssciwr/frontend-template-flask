@@ -17,7 +17,8 @@
     </script>
 </head>
 <body>
-<p>Automated annotation for a set of different tools and languages. For more information, see <a href="https://github.com/ssciwr/argumentation-management">the GitHub repository.</a></p>
+<h1>Automated annotation for a set of different tools and languages.</h1>
+<p>For more information, see <a href="https://github.com/ssciwr/argumentation-management">the GitHub repository.</a></p>
 <p>Provided by the Scientific Software Center, Heidelberg University, July 2023.</p>
 
 <p>1. Please select your raw text file to be annotated:</p>
@@ -30,12 +31,41 @@
 
 <p>2. Set input parameters:</p>
 <form method="post" action="/">
-<label>tool name (if several, separate by commas as spacy, stanza):</label> <input type="text" name="tool"> <br>
-<label>corpus name:</label> <input type="text" name="corpus_name"> <br>
-<label>language to be analyzed:</label> <input type="text" name="language"> <br>
-<label>processing option (select fast, accurate or manual):</label> <input type="text" name="option"> <br>
-<label>processing type (select any or several of sentencize, tokenize, pos, lemma):</label> <input type="text" name="option"> <br>
-<label>output format (select any of vrt, xml):</label> <input type="text" name="option"> <br>
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        /* Create two equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 50%;
+          padding: 10px;
+        }
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+        </style>
+        
+        <div class="row">
+          <div class="column">
+            <label>tool name (if several, separate by commas as spacy, stanza):</label> <br>
+            <label>corpus name:</label> <br>
+            <label>language to be analyzed:</label> <br>
+            <label>processing option (select fast, accurate or manual):</label> <br>
+            <label>processing type (select any or several of sentencize, tokenize, pos, lemma):</label> <br>
+            <label>output format (select any of vrt, xml):</label> <br>
+          </div>
+          <div class="column">
+            <input type="text" name="tool"> <br>
+            <input type="text" name="corpus_name"> <br>
+            <input type="text" name="language"> <br>
+            <input type="text" name="processing_option"> <br>
+            <input type="text" name="processing_type"> <br>
+            <input type="text" name="output_format"> <br>
+          </div>
+        </div>
 <input type="hidden" name="form_name" value="SetJsonOperator">
 <input type="submit" value="submit">
 </form>
