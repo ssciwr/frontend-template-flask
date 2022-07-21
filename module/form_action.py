@@ -3,9 +3,9 @@ import random
 import os
 import time
 from test.ssctest import circle_area, timing_task
+import nlpannotator.base as base
 
-
-ALLOWED_EXTENSIONS = set(["json"])
+ALLOWED_EXTENSIONS = set(["json", "txt"])
 
 
 class FormOperator:
@@ -138,7 +138,7 @@ class UploadConfigOperator(FormOperator):
                 msg_dict["upload_rte"] = False
                 msg_dict[
                     "upload_msg"
-                ] = " *** Upload configuration failed. Invalid json file format."
+                ] = " *** Upload of input options failed. Invalid json file format."
                 return
             if not os.path.exists(cache_path):
                 os.makedirs(cache_path)
@@ -155,6 +155,32 @@ class UploadConfigOperator(FormOperator):
         return
 
 
+class UploadTextOperator(FormOperator):
+    NAME = "UploadTextOperator"
+
+    def __init__(self):
+        None
+
+    def action(self, request, msg_dict):
+        cache_dir = "".join(random.sample("abcdefghijklmnopqrstuvwxyz!0123456789", 5))
+        cache_path = "./statics/data/cache/" + cache_dir
+
+        f = request.files["file"]
+        if f and allowed_file(f.filename):
+            if not os.path.exists(cache_path):
+                os.makedirs(cache_path)
+            f.save(os.path.join(cache_path, "data.txt"))
+            msg_dict["upload_rte"] = True
+            msg_dict["upload_msg"] = " *** Upload data success."
+        else:
+            msg_dict["upload_rte"] = False
+            msg_dict[
+                "upload_msg"
+            ] = " *** Upload input text failed. Invalid text file extension (txt)."
+
+        return
+
+
 class FormAdapter:
     def __init__(self):
         self.form_operators = {}
@@ -165,6 +191,7 @@ class FormAdapter:
             DownloadConfigOperator(), DownloadConfigOperator.NAME
         )
         self.register_form_operator(UploadConfigOperator(), UploadConfigOperator.NAME)
+        self.register_form_operator(UploadTextOperator(), UploadTextOperator.NAME)
 
     def register_form_operator(self, form_operator, form_name):
         self.form_operators[form_name] = form_operator

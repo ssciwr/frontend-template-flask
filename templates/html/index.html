@@ -8,9 +8,9 @@
     function selectFile(fnUpload) {
         var filename = fnUpload.value;
         var mime = filename.toLowerCase().substr(filename.lastIndexOf("."));
-        if(mime!=".json")
+        if(mime!=".json") or (mime != ".txt")
         {
-            alert("Please select json file configuration.");
+            alert("Please select json or txt file for upload.");
             fnUpload.outerHTML=fnUpload.outerHTML;
         }
     }
@@ -23,7 +23,7 @@
 
 <p>1. Please select your raw text file to be annotated:</p>
 <form method="post" enctype="multipart/form-data" action="upload">
-<input type="hidden" name="form_name" value="UploadConfigOperator">
+<input type="hidden" name="form_name" value="UploadTextOperator">
 <input type="file" name="file" onchange="selectFile(this)" />
 <input type="submit" value="upload" />
 </form>
