@@ -3,7 +3,7 @@ import random
 import os
 import time
 from test.ssctest import circle_area, timing_task
-import nlpannotator.base as base
+import nlpannotator
 
 ALLOWED_EXTENSIONS = set(["json", "txt"])
 
@@ -38,21 +38,23 @@ class CircleAreaOperator(FormOperator):
         return
 
 
-class CubeAreaOperator(FormOperator):
-    NAME = "CubeAreaOperator"
+class NLPAnnotatorOperator(FormOperator):
+    NAME = "NLPAnnotatorOperator"
 
-    def __init__(self):
+    def __init__(
+        self,
+    ):
         None
 
-    def action(self, request, msg_dict):
-        length_text = request.form.get("length")
-        if length_text is not None:
-            if length_text.isdigit():
-                length = int(length_text)
-                cube = timing_task(length)
-                msg_dict["cube"] = "cube for length " + str(length) + " is " + str(cube)
-            else:
-                msg_dict["cube"] = length_text + " is not a valid length"
+    def action(self, path_json, path_txt):
+        if SetJsonOperator.msg_dict:
+            path_json = SetJsonOperator.msg_dict["file_path"]
+        elif UploadConfigOperator.msg_dict:
+            path_json = UploadConfigOperator.msg_dict["file_path"]
+        path_txt = UploadTextOperator.msg_dict["file_path"]
+        path_json = "./statics/json/cache" + path_json + "input.json"
+        path_txt = "./statics/txt/cache" + path_txt + "data.txt"
+        nlpannotator.main.run(path_json, path_txt)
         return
 
 
@@ -60,7 +62,7 @@ class SetJsonOperator(FormOperator):
     NAME = "SetJsonOperator"
 
     def __init__(self):
-        None
+        self.msg_dict = {}
 
     def action(self, request, msg_dict):
         tool = request.form.get("tool")
@@ -92,15 +94,16 @@ class SetJsonOperator(FormOperator):
 
         cache_dir = "".join(random.sample("abcdefghijklmnopqrstuvwxyz!0123456789", 13))
         cache_path = "./statics/json/cache/" + cache_dir
+
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
         with open(cache_path + "/input.json", "w") as dump_f:
             json.dump(input, dump_f, indent=4)
-        msg_dict["file_path"] = cache_dir
-        msg_dict[
+        self.msg_dict["file_path"] = cache_dir
+        self.msg_dict[
             "js_cached"
         ] = " *** Input parameters set successfully, download your input options for future reference: "
-        msg_dict["dstyle"] = ""
+        self.msg_dict["dstyle"] = ""
 
         return
 
@@ -123,7 +126,7 @@ class UploadConfigOperator(FormOperator):
     NAME = "UploadConfigOperator"
 
     def __init__(self):
-        None
+        self.msg_dict = {}
 
     def action(self, request, msg_dict):
         cache_dir = "".join(random.sample("abcdefghijklmnopqrstuvwxyz!0123456789", 5))
@@ -135,8 +138,8 @@ class UploadConfigOperator(FormOperator):
                 input = json.load(f)
             except ValueError as err:
                 print("UploadConfigOperator load json error.")
-                msg_dict["upload_rte"] = False
-                msg_dict[
+                self.msg_dict["upload_rte"] = False
+                self.msg_dict[
                     "upload_msg"
                 ] = " *** Upload of input options failed. Invalid json file format."
                 return
@@ -144,11 +147,12 @@ class UploadConfigOperator(FormOperator):
                 os.makedirs(cache_path)
             with open(cache_path + "/input.json", "w") as dump_f:
                 json.dump(input, dump_f, indent=4)
-            msg_dict["upload_rte"] = True
-            msg_dict["upload_msg"] = " *** Upload configuration success."
+            self.msg_dict["upload_rte"] = True
+            self.msg_dict["file_path"] = cache_dir
+            self.msg_dict["upload_msg"] = " *** Upload configuration success."
         else:
-            msg_dict["upload_rte"] = False
-            msg_dict[
+            self.msg_dict["upload_rte"] = False
+            self.msg_dict[
                 "upload_msg"
             ] = " *** Upload configuration failed. Invalid json file extension."
 
@@ -159,7 +163,7 @@ class UploadTextOperator(FormOperator):
     NAME = "UploadTextOperator"
 
     def __init__(self):
-        None
+        self.msg_dict = {}
 
     def action(self, request, msg_dict):
         cache_dir = "".join(random.sample("abcdefghijklmnopqrstuvwxyz!0123456789", 5))
@@ -170,11 +174,11 @@ class UploadTextOperator(FormOperator):
             if not os.path.exists(cache_path):
                 os.makedirs(cache_path)
             f.save(os.path.join(cache_path, "data.txt"))
-            msg_dict["upload_rte"] = True
-            msg_dict["upload_msg"] = " *** Upload data success."
+            self.msg_dict["upload_rte"] = True
+            self.msg_dict["upload_msg"] = " *** Upload data success."
         else:
-            msg_dict["upload_rte"] = False
-            msg_dict[
+            self.msg_dict["upload_rte"] = False
+            self.msg_dict[
                 "upload_msg"
             ] = " *** Upload input text failed. Invalid text file extension (txt)."
 
@@ -185,7 +189,7 @@ class FormAdapter:
     def __init__(self):
         self.form_operators = {}
         self.register_form_operator(CircleAreaOperator(), CircleAreaOperator.NAME)
-        self.register_form_operator(CubeAreaOperator(), CubeAreaOperator.NAME)
+        self.register_form_operator(NLPAnnotatorOperator(), NLPAnnotatorOperator.NAME)
         self.register_form_operator(SetJsonOperator(), SetJsonOperator.NAME)
         self.register_form_operator(
             DownloadConfigOperator(), DownloadConfigOperator.NAME
