@@ -29,7 +29,7 @@ def main_index():
         form_adapter.adapt(request, flash_text)
 
     return render_template(
-        "html/index.html",
+        "index.html",
         f_text0=flash_text["circle"],
         f_text1=flash_text["cube"],
         f_text2=flash_text["js_cached"],

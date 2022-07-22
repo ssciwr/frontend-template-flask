@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title> NLPannotator Frontend </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript">
+{% extends 'base.html' %}
+
+{% block head %}
+<title> NLPannotator Frontend </title>
+<script type="text/javascript">
     function selectFile(fnUpload) {
         var filename = fnUpload.value;
         var mime = filename.toLowerCase().substr(filename.lastIndexOf("."));
@@ -15,8 +13,9 @@
         }
     }
     </script>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
 <h1>Automated annotation for a set of different tools and languages.</h1>
 <p>For more information, see <a href="https://github.com/ssciwr/argumentation-management">the GitHub repository.</a></p>
 <p>Provided by the Scientific Software Center, Heidelberg University, July 2023.</p>
@@ -31,23 +30,6 @@
 
 <p>2. Set input parameters:</p>
 <form method="post" action="/">
-    <style>
-        * {
-          box-sizing: border-box;
-        }
-        /* Create two equal columns that floats next to each other */
-        .column {
-          float: left;
-          width: 50%;
-          padding: 10px;
-        }
-        .row:after {
-          content: "";
-          display: table;
-          clear: both;
-        }
-        </style>
-        
         <div class="row">
           <div class="column">
             <label>tool name (if several, separate by commas as spacy, stanza):</label> <br>
@@ -72,7 +54,7 @@
 <p>{{f_text1}}</p>
 
 <p>3. Please download your configuration and save for later:</p>
-<a href="download/{{file_path}}" target=_blank style="{{dstyle}}">Download Configuration</a>
+<a href="download/{{file_path}}" target=_blank >Download Configuration</a>
 
 <p>4. For a preset configuration, please upload your json input file with processing options:</p>
 <form method="post" enctype="multipart/form-data" action="upload">
@@ -97,6 +79,4 @@
 </form>
 <p>{{f_text3}}</p>
 
-
-</body>
-</html>
+{% endblock %}
